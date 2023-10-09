@@ -10,12 +10,35 @@ Details on how to participate in the competition are found [here](https://colab.
 ---
 - [NLBSE'24 Tool Competition: Code Comment Classification](#nlbse24-tool-competition-code-comment-classification)
 - [Contents of this package](#contents-of-this-package)
+- [Citing Related Work](#citing-related-work)
 - [Folder structure](#folder-structure)
 - [Data for classification](#data-for-classification)
 - [Dataset Preparation](#dataset-preparation)
 - [Software Projects](#software-projects)
 - [Baseline Model Features](#baseline-model-features)
 - [Baseline Results](#baseline-results)
+
+## Citing Related Work
+Since you will be using our dataset (and possibly one of our notebooks) as well as the original work behind the dataset, please cite the following references in your paper:
+```
+@inproceedings{nlbse2024,
+  author={Kallis, Rafael and Colavito, Giuseppe and Al-Kaswan, Ali and Pascarella, Luca and Chaparro, Oscar and Rani, Pooja},
+  title={The NLBSE'24 Tool Competition},
+  booktitle={Proceedings of The 3rd International Workshop on Natural Language-based Software Engineering (NLBSE'24)},
+  year={2024}
+}
+```
+```
+@article{rani2021,
+  title={How to identify class comment types? A multi-language approach for class comment classification},
+  author={Rani, Pooja and Panichella, Sebastiano and Leuenberger, Manuel and Di Sorbo, Andrea and Nierstrasz, Oscar},
+  journal={Journal of systems and software},
+  volume={181},
+  pages={111047},
+  year={2021},
+  publisher={Elsevier}
+}
+```
 
 ## Folder structure
 - ### Extended Java
