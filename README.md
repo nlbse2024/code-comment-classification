@@ -1,6 +1,6 @@
-## NLBSE'23 Tool Competition: Code Comment Classification
+## NLBSE'24 Tool Competition: Code Comment Classification
 
-This repository contains the data and results for the baseline classifiers the [NLBSE’23 tool competition](https://nlbse2023.github.io/tools/) on code comment classification.
+This repository contains the data and results for the baseline classifiers the [NLBSE’24 tool competition](https://nlbse2024.github.io/tools/) on code comment classification.
 
 Participants of the competition must use the provided data to train/test their classifiers, which should outperform the baselines.
 
@@ -8,7 +8,7 @@ Details on how to participate in the competition are found [here](https://colab.
 
 ## Contents of this package
 ---
-- [NLBSE'23 Tool Competition: Code Comment Classification](#nlbse23-tool-competition-code-comment-classification)
+- [NLBSE'24 Tool Competition: Code Comment Classification](#nlbse24-tool-competition-code-comment-classification)
 - [Contents of this package](#contents-of-this-package)
 - [Folder structure](#folder-structure)
 - [Data for classification](#data-for-classification)
@@ -18,6 +18,8 @@ Details on how to participate in the competition are found [here](https://colab.
 - [Baseline Results](#baseline-results)
 
 ## Folder structure
+- ### Extended Java
+    - `merged_java.csv` the additiponal csv file for the Java.
 - ### Java
     - `classifiers`:  We have trained Random Forest classifiers (also provided in the folder) on the selected sentence categories. 
     - `input`: The CSV files of the sentences for each category (within a training and testing split). **These are are the main files used for classification**. See the format of these files below.
@@ -117,14 +119,7 @@ We extracted the class comments from selected projects.
 
 ## Baseline Model Features
 
-`0-0-<category>-<Feature-Set>.arff`       - ARFF format of the input file for a classifier for a "category" with the set of "feature". The feature set are TEXT (tfidf), NLP (heuristic). For example:   
- - [0-0-summary-tfidf-heuristic.arff](/java/weka-arff/training/0-0-summary-tfidf-heuristic.arff) input training file for a classifier for the summary category with the TEXT (tfidf) features and the NLP (heuristic) features.
-- [1-0-summary-tfidf-heuristic.arff](/java/weka-arff/testing/1-0-summary-tfidf-heuristic.arff)  - input testing file for a classifier for the summary category with the TEXT (tfidf) features and the NLP (heuristic) features.
 
 ## Baseline Results
 
 The summary of the baseline results are found in `baseline_results_summary.xlsx`.
-
-In the `results` directory of each language, you will find CSV files named as `0-0-summary-tfidf-heuristic-randomforest-outputs.csv`. Each CSV output file stores the results for a particular category  (“summary” - see `summary` directory). The results contain a confusion matrix of true positive (tp), false positive (fp), true negative (tn), and false negative (fn) as well as weighted precision (w\_pr), weighted recall (w\_re), and weighted f-measure (w\_f_measure), as calculated by Weka. 
-
-The CSV files named as `0-0-deprecation-tfidf-heuristic-randomforest-outputs-non-weighted.csv` contain the non-weighted precision, recall, and f-measure results for each category computed on the test set (which are the same results found in `baseline_results_summary.xlsx`).
