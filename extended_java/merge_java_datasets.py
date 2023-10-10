@@ -2,6 +2,7 @@ import argparse
 import os
 from csv import DictReader, DictWriter
 from typing import Dict, Tuple
+import pandas as pd
 
 
 def extract_text_from_file(path: str, start: int, stop: int) -> Tuple[str, int]:
@@ -69,7 +70,7 @@ def extract_comments(input_path: str, project_path: str, output_path: str) -> No
     output_file.close()
 
 
-def merge_datasets(nlbse_csv: str, input_csv: str, merged_path: str) -> None:
+def merge_datasets(nlbse_csv: str, input_csv: str, merged_path: str, posneg_merged_path: str) -> None:
     header = ["Project", "Class", "Comment", "comment length", "summary", "Expand", "rational", "deprecation", "usage",
               "exception", "todo", "Incomplete", "Commented code", "directive", "formatter", "License", "Ownership",
               "Pointer", "Auto generated", "Noise", "Warning", "Recommendation", "Precondition", "Coding Guidelines",
@@ -102,17 +103,29 @@ def merge_datasets(nlbse_csv: str, input_csv: str, merged_path: str) -> None:
         class_list.append(line["Project"] + "___" + line["Class"])
     input_file.close()
 
+    df = pd.read_csv("data/java.csv", sep=',')
+    used_categories = df["category"].unique()
+
+    # Merge instances
     merged_file = open(merged_path, 'w', newline='', encoding="utf-8")
     merged_csv = DictWriter(merged_file, delimiter=',', fieldnames=header, extrasaction='ignore')
     merged_csv.writeheader()
 
+    # Merge instances in the positive/negative file format
+    posneg_merged_file = open(posneg_merged_path, 'w', newline='', encoding="utf-8")
+    header = ["comment_sentence_id", "class", "comment_sentence", "partition", "instance_type", "category"]
+    posneg_merged_csv = DictWriter(posneg_merged_file, delimiter=',', fieldnames=header, extrasaction='ignore')
+    posneg_merged_csv.writeheader()
+
     input_file = open(input_csv, 'r', newline='', encoding="utf-8")
     csv_input = DictReader(input_file, delimiter=',')
+    count_id = 5522
     count = 0
     for line in csv_input:
+        # categories.add(line["category"])
         if line["Project"] + "___" + line["Class"] in class_list:
             count += 1
-            print("Found: {} {} ".format(line["Project"], line["Class"]))
+            # print("Found: {} {} ".format(line["Project"], line["Class"]))
         else:
             merged_csv.writerow({"Project": line["Project"],
                                  "Class": line["Class"],
@@ -120,21 +133,58 @@ def merge_datasets(nlbse_csv: str, input_csv: str, merged_path: str) -> None:
                                  "comment length": line["comment length"],
                                  category_map[line["Category Inner"].lower()]: line["Comment"],
                                  })
-    print("Found {} occurrences".format(count))
+
+            if category_map[line["Category Inner"].lower()] in used_categories:
+                posneg_merged_csv.writerow({"comment_sentence_id": count_id,
+                                            "class": line["Class"],
+                                            "comment_sentence": line["Comment"],
+                                            "partition": 0,
+                                            "instance_type": 0,
+                                            "category": category_map[line["Category Inner"].lower()]
+                                            })
+                count_id += 1
+    print("Removed {} overlapping occurrences".format(count))
     input_file.close()
+    merged_file.close()
+    posneg_merged_file.close()
+
+    df = pd.read_csv(posneg_merged_path, sep=',')
+
+    df_list = []
+    for cat in used_categories:
+        tmp = pd.DataFrame(df)
+        tmp['cat_temp'] = cat
+        df_list.append(tmp)
+
+    df_new = pd.concat(df_list, ignore_index=True)
+
+    df_new['instance_type'] = (df_new['cat_temp'] == df_new['category']).astype(int)
+    df_new = df_new.drop(columns=["category"])
+    df_new = df_new.rename(columns={'cat_temp': 'category'})
+
+    # df_new.to_csv("test.csv", index=False, sep=',')
+
+    # Group the data by the two columns category and instance_type and assign tra/test partition
+    col_idx = df_new.columns.get_loc("partition")
+    for group, group_df in df_new.groupby(["category", "instance_type"]):
+        row_cut = int(len(group_df) * .2)
+        group_df.iloc[:row_cut, [col_idx]] = 1
+        df_new.update(group_df)
+
+    df_new.to_csv("data/partition_split.csv", index=False, sep=',')
 
 
 def main(flags: Dict[str, str]) -> None:
     data_path = flags["data_path"]
-    input_path = os.path.join(data_path, "JavaCommentsClassification", "List of comments",
-                              "Classification_output.csv")
+    input_path = os.path.join(data_path, "JavaCommentsClassification", "List of comments", "Classification_output.csv")
     projects_path = os.path.join(data_path, "JavaCommentsClassification", "projects")
     output_path = os.path.join(data_path, "output_luca.csv")
     extract_comments(input_path, projects_path, output_path)
 
     nlbse_csv = flags["nlbse_input"]
     merged_path = os.path.join(data_path, "merged_java.csv")
-    merge_datasets(nlbse_csv, output_path, merged_path)
+    posneg_merged_path = os.path.join(data_path, "posneg_merged_java.csv")
+    merge_datasets(nlbse_csv, output_path, merged_path, posneg_merged_path)
 
 
 # Press the green button in the gutter to run the script.
@@ -143,8 +193,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--data_path", help="Input data path", type=str, default="data")
-    parser.add_argument("-nlbse", "--file_nlbse", help="First CSV file (NLBSE", type=str,
-                        default="java_combined.csv")
+    parser.add_argument("-nlbse", "--file_nlbse", help="First CSV file (NLBSE", type=str, default="java_combined.csv")
     args = parser.parse_args()
 
     # Check for user's flags
