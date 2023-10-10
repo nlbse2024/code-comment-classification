@@ -39,6 +39,15 @@ Since you will be using our dataset (and possibly one of our notebooks) as well 
   publisher={Elsevier}
 }
 ```
+```
+@inproceedings{pascarella2017,
+  title={Classifying code comments in Java open-source software systems},
+  author={Pascarella, Luca and Bacchelli, Alberto},
+  booktitle={2017 IEEE/ACM 14th International Conference on Mining Software Repositories (MSR)},
+  year={2017},
+  organization={IEEE}
+}
+```
 
 ## Folder structure
 - ### Extended Java
