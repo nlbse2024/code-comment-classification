@@ -4,7 +4,7 @@ This repository contains the data and results for the baseline classifiers the [
 
 Participants of the competition must use the provided data to train/test their classifiers, which should outperform the baselines.
 
-Details on how to participate in the competition are found [here](https://colab.research.google.com/drive/1cW8iUPY9rTjZdXnGYtJ4ARBSISyKieWt#scrollTo=7ITz0v7mv4jV).
+Details on how to participate in the competition are found [here]().
 
 ## Contents of this package
 ---
@@ -50,8 +50,6 @@ Since you will be using our dataset (and possibly one of our notebooks) as well 
 ```
 
 ## Folder structure
-- ### Extended Java
-    - `merged_java.csv` the additiponal csv file for the Java.
 - ### Java
     - `classifiers`:  We have trained Random Forest classifiers (also provided in the folder) on the selected sentence categories. 
     - `input`: The CSV files of the sentences for each category (within a training and testing split). **These are are the main files used for classification**. See the format of these files below.
@@ -83,22 +81,13 @@ We provide a CSV file for each programming language (in the `input` folder) wher
 
 - **Splitting sentences**.
     - Since the classification is sentence-based, we split the comments into sentences. 
-    - As we use NEON tool to extract NLP features, we use the same splitting method to split the sentence. It splits the sentences based on selected characters `(\\n|:)`. This is another reason to remove some of the special characters to avoid unnecessary splitting. 
+    - We use NEON tool to split the text into sentences. It splits the sentences based on selected characters `(\\n|:)`. This is another reason to remove some of the special characters to avoid unnecessary splitting. 
     - Note: the sentences may not be complete sentences. Sometimes the annotators classified a relevant phrase a sentence into a category. 
+
 - **Partition selection**.  
     - After splitting comments into  sentences, we split the sentence dataset in an 80/20 training-testing split. 
     - The partitions are determined based on an algorithm in which we first determine the stratum of each class comment. The original paper gives more details on strata distribution. 
     - Then, we follow a round-robin approach to fill training and testing partitions from the strata. We select a stratum, select the category with a minimum number of instances in it to achieve the best balancing, and assign it to the train or test partition based on the required proportions. 
-
-- **Feature preparation**. We use two kinds of features: TEXT and NLP. 
-    - For NLP features, we prepare a term-by-document matrix M, where each row represents a comment sentence (i.e., a sentence belongs to our language dataset composing CCTM) and each column represents the extracted feature. 
-    - To extract the NLP features, we use NEON, a tool proposed in the previous work of Andrea Di Sorbo. The tool detects NLP patterns from natural language-based sentences. We add the identified NLP patterns as feature columns in M, where each of them models the presence (modeled by 1) or absence (modeled by 0) of an NLP pattern in the comment sentences. In sum, each i\_th row represents a comment sentence, and j_th represents an NLP feature.
-    - For the TEXT features, we apply typical preprocessing steps such as stop word removal, stemmer, and convert it a vector based on the TF-IDF approach. The first attribute is a sentence. In case of TEXT features, the rows are the comment sentences and the column represents a term contained in it. Each cell of the matrix represents the weight (or importance) of the j\_th term contained in the i_th comment sentence. The terms in M are weighted using the TF–IDF score. 
-    - We prepare such Matrix M for each category of each language. The last column of the Matrix represents the category. 
-
-- **Classification**. We used Weka to classify the comment sentences into each category using the Random Forest model (the baseline).
-
-- **Evaluation**. We evaluated our baseline models (i.e., for each category) using standard evaluation metrics, precision, recall, and F1-score. 
 
 ## Software Projects
 We extracted the class comments from selected projects.
