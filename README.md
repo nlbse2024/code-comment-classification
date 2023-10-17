@@ -4,7 +4,7 @@ This repository contains the data and results for the baseline classifiers the [
 
 Participants of the competition must use the provided data to train/test their classifiers, which should outperform the baselines.
 
-Details on how to participate in the competition are found [here]().
+Details on how to participate in the competition are found [here](https://colab.research.google.com/drive/1GhpyzTYcRs8SGzOMH3Xb6rLfdFVUBN0P?usp=sharing).
 
 ## Contents of this package
 ---
@@ -15,7 +15,6 @@ Details on how to participate in the competition are found [here]().
 - [Data for classification](#data-for-classification)
 - [Dataset Preparation](#dataset-preparation)
 - [Software Projects](#software-projects)
-- [Baseline Model Features](#baseline-model-features)
 - [Baseline Results](#baseline-results)
 
 ## Citing Related Work
@@ -138,9 +137,12 @@ We extracted the class comments from selected projects.
         
     - Requests: The version of the project referred to extract class comments is available as [Raw Dataset](https://doi.org/10.5281/zenodo.4311839) on Zenodo. More detail about the project is available on GitHub [Requests](https://github.com/psf/requests/)
 
-## Baseline Model Features
-
-
 ## Baseline Results
 
+We trained and tested 19 binary classifiers (one for each category) using the Sentence Transformer architecture on the provided training and test sets.
+
+The baseline classifiers are coined as STACC and proposed by [Al-Kaswan et al.](https://arxiv.org/abs/2302.13681)
+
 The summary of the baseline results are found in `baseline_results_summary.xlsx`.
+
+We provide a notebook to [train our baseline classifiers](STACC_baseline.ipynb) and to [run the evaluations](https://colab.research.google.com/drive/1lvXuzdl_vSwMTCGIEfqTyQC1nzl22WCy?usp=sharing).
