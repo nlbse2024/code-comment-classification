@@ -50,10 +50,7 @@ Since you will be using our dataset (and possibly one of our notebooks) as well 
 
 ## Folder structure
 - ### Java
-    - `classifiers`:  We have trained Random Forest classifiers (also provided in the folder) on the selected sentence categories. 
-    - `input`: The CSV files of the sentences for each category (within a training and testing split). **These are are the main files used for classification**. See the format of these files below.
-    - `results`: The results contain a CSV file with the classification results of the baseline classifier for each category.
-    - `weka-arff`: ready-made input files for WEKA, with TF_IDF and NLP features extracted from the sentences (more information below). 
+    - `input`: The CSV files of the sentences for each category (within a training and testing split). **These are the main files used for classification**. See the format of these files below. 
     - `project_classes`: CSV files with the list of classes for each software project and corresponding code comments.
 - ### Pharo
   Same structure as Java.
@@ -62,37 +59,37 @@ Since you will be using our dataset (and possibly one of our notebooks) as well 
 
 ## Data for classification
 
-We provide a CSV file for each programming language (in the `input` folder) where each row represent a sentence (aka an instance) and each sentence contains six columns as follow:
+We provide a CSV file for each programming language (in the `input` folder) where each row represents a sentence (aka an instance) and each sentence contains six columns as follows:
 - `comment_sentence_id` is the unique sentence ID;
 - `class` is the class name referring to the source code file where the sentence comes from;
-- `comment_sentence` is the actual sentence string, which is a part of a (multi-line) class comment;
-- `partition` is the dataset split in training and testing, 0 identifies training instances and 1 identifies testing instances, respectively;
+- `comment_sentence` is the actual sentence string, which is part of a (multi-line) class comment;
+- `partition` is the dataset split in training and testing; 0 identifies training instances and 1 identifies testing instances, respectively;
 - `instance_type` specifies if an instance actually belongs to the given category or not: 0 for negative and 1 for positive instances;
 - `category` is the ground-truth or oracle category.
 
 
 ## Dataset Preparation
 
-- **Preprocessing**. Before splitting, the manually-tagged class comments were preprocessed as follows:
+- **Preprocessing**. Before splitting, the manually tagged class comments were preprocessed as follows:
     - We changed the sentences to lowercase, reduced multiple line endings to one, and removed special characters except for  `a-z0-9,.@#&^%!? \n`  since different languages can have different meanings for the symbols. For example, `$,:{}!!` are markup symbols in Pharo, while in Java it is `‘/* */ <p>`, and `#,`  in Python. For simplicity reasons, we removed all such special character meanings.
-    - We replaced periods in numbers, "e.g.", "i.e.", etc, so that comment sentences do not get split incorrectly. 
+    - We replaced periods in numbers, "e.g.", "i.e.", etc, so that comment sentences are not split incorrectly. 
     - We removed extra spaces before and after comments or lines. 
 
 - **Splitting sentences**.
     - Since the classification is sentence-based, we split the comments into sentences. 
-    - We use NEON tool to split the text into sentences. It splits the sentences based on selected characters `(\\n|:)`. This is another reason to remove some of the special characters to avoid unnecessary splitting. 
-    - Note: the sentences may not be complete sentences. Sometimes the annotators classified a relevant phrase a sentence into a category. 
+    - We use the NEON tool to split the text into sentences. It splits the sentences based on selected characters `(\\n|:)`. This is another reason to remove some of the special characters to avoid unnecessary splitting. 
+    - Note: the sentences may not be complete. Sometimes, the annotators classify a relevant phrase a sentence into a category. 
 
 - **Partition selection**.  
     - After splitting comments into  sentences, we split the sentence dataset in an 80/20 training-testing split. 
     - The partitions are determined based on an algorithm in which we first determine the stratum of each class comment. The original paper gives more details on strata distribution. 
-    - Then, we follow a round-robin approach to fill training and testing partitions from the strata. We select a stratum, select the category with a minimum number of instances in it to achieve the best balancing, and assign it to the train or test partition based on the required proportions. 
+    - Then, we follow a round-robin approach to fill training and testing partitions from the strata. We select a stratum, select the category with a minimum number of instances in it to achieve the best balancing and assign it to the train or test partition based on the required proportions. 
 
 ## Software Projects
 We extracted the class comments from selected projects.
 
 - ### Java 
-     Details of six java projects. 
+     Details of six Java projects. 
     - Eclipse:  The version of the project referred to extracted class comments is available as [Raw Dataset](https://doi.org/10.5281/zenodo.4311839) on Zenodo. More detail about the project is available on GitHub [Eclipse](https://github.com/eclipse).
     
     - Guava: The version of the project referred to extracted class comments is available as [Raw Dataset](https://doi.org/10.5281/zenodo.4311839) on Zenodo. More detail about the project is available on GitHub [Guava](https://github.com/google/guava).
@@ -143,6 +140,6 @@ We trained and tested 19 binary classifiers (one for each category) using the Se
 
 The baseline classifiers are coined as STACC and proposed by [Al-Kaswan et al.](https://arxiv.org/abs/2302.13681)
 
-The summary of the baseline results are found in `baseline_results_summary.xlsx`.
+The summary of the baseline results is found in `baseline_results_summary.xlsx`.
 
 We provide a notebook to [train our baseline classifiers](STACC_baseline.ipynb) and to [run the evaluations](https://colab.research.google.com/drive/1lvXuzdl_vSwMTCGIEfqTyQC1nzl22WCy?usp=sharing).
